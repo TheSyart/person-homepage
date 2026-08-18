@@ -103,4 +103,31 @@ describe('Agent Clay 首页', () => {
     expect(core.classes()).not.toContain('is-squishing');
     vi.useRealTimers();
   });
+
+  test('指针移动只产生受限视差并在离开 Hero 时归零', async () => {
+    const wrapper = mount(AgentHero, {
+      props: { stats },
+      global: { stubs: { RouterLink: RouterLinkStub } }
+    });
+    const hero = wrapper.get('.agent-hero');
+    vi.spyOn(hero.element, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 1000,
+      height: 500,
+      right: 1000,
+      bottom: 500,
+      x: 0,
+      y: 0,
+      toJSON: () => ({})
+    });
+
+    await hero.trigger('pointermove', { clientX: 750, clientY: 125 });
+    expect(wrapper.get('.agent-hero__visual').attributes('style') || '').toContain('--pointer-x: 9px');
+    expect(wrapper.get('.agent-hero__visual').attributes('style') || '').toContain('--pointer-y: -7px');
+
+    await hero.trigger('pointerleave');
+    expect(wrapper.get('.agent-hero__visual').attributes('style') || '').toContain('--pointer-x: 0px');
+    expect(wrapper.get('.agent-hero__visual').attributes('style') || '').toContain('--pointer-y: 0px');
+  });
 });

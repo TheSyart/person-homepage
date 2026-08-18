@@ -9,6 +9,7 @@ defineProps({
 const avatarFailed = ref(false);
 const squishing = ref(false);
 const sparks = ref([]);
+const parallaxStyle = ref({ '--pointer-x': '0px', '--pointer-y': '0px' });
 let squishTimer;
 let sparkTimer;
 
@@ -44,6 +45,18 @@ function activate() {
   sparkTimer = setTimeout(() => { sparks.value = []; }, 800);
 }
 
+function updateParallax(event) {
+  const rect = event.currentTarget.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+  const x = Math.round((((event.clientX - rect.left) / rect.width) - .5) * 36);
+  const y = Math.round((((event.clientY - rect.top) / rect.height) - .5) * 28);
+  parallaxStyle.value = { '--pointer-x': `${x}px`, '--pointer-y': `${y}px` };
+}
+
+function resetParallax() {
+  parallaxStyle.value = { '--pointer-x': '0px', '--pointer-y': '0px' };
+}
+
 onBeforeUnmount(() => {
   clearTimeout(squishTimer);
   clearTimeout(sparkTimer);
@@ -51,7 +64,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="agent-hero" aria-labelledby="home-title">
+  <section class="agent-hero" aria-labelledby="home-title" @pointermove="updateParallax" @pointerleave="resetParallax">
     <div class="agent-hero__inner site-shell">
       <div class="agent-hero__copy">
         <p class="agent-hero__eyebrow"><i aria-hidden="true"></i>OPEN-SOURCE AGENT BUILDER · CREATOR</p>
@@ -63,7 +76,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <div class="agent-hero__visual" aria-label="动态粘土 Agent 核心">
+      <div class="agent-hero__visual" :style="parallaxStyle" aria-label="动态粘土 Agent 核心">
         <div class="agent-halo" aria-hidden="true"></div>
         <div class="agent-orbit agent-orbit--one" aria-hidden="true"></div>
         <div class="agent-orbit agent-orbit--two" aria-hidden="true"></div>
