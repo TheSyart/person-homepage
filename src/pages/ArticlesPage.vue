@@ -27,18 +27,17 @@ onMounted(async () => {
 
     <ul v-else-if="articles.length" class="clay-grid" aria-label="文章列表">
       <li v-for="(article, index) in articles" :key="article.slug" class="clay-list-item" v-reveal="index * 60">
-        <router-link :to="`/articles/${article.slug}`" class="clay-card clay-surface clay-interactive"
-          :class="TONES[index % TONES.length]">
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-            <time class="clay-tag font-code">{{ article.date }}</time>
-            <span class="clay-tag">阅读全文 →</span>
+        <article class="article-card clay-surface" :class="TONES[index % TONES.length]" data-article-card>
+          <router-link :to="`/articles/${article.slug}`" class="article-card__cover clay-interactive">
+            <img :src="article.cover" :alt="article.coverAlt || `${article.title}封面`" loading="lazy">
+          </router-link>
+          <div class="article-card__body">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4"><time class="clay-tag font-code">{{ article.date }}</time><span class="clay-tag">{{ article.tags?.[0] || '文章' }}</span></div>
+            <h2><router-link :to="`/articles/${article.slug}`">{{ article.title }}</router-link></h2>
+            <p>{{ article.summary }}</p>
+            <div class="article-card__footer"><div class="flex flex-wrap gap-2"><span v-for="tag in article.tags" :key="tag" class="clay-tag">{{ tag }}</span></div><router-link :to="`/articles/${article.slug}`" class="clay-button clay-button--small">阅读全文 →</router-link></div>
           </div>
-          <h2 class="text-2xl font-black leading-snug mb-4 pr-5">{{ article.title }}</h2>
-          <p class="text-muted leading-relaxed mb-5">{{ article.summary }}</p>
-          <div class="flex flex-wrap gap-2">
-            <span v-for="tag in article.tags" :key="tag" class="clay-tag">{{ tag }}</span>
-          </div>
-        </router-link>
+        </article>
       </li>
     </ul>
 

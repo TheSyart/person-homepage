@@ -17,12 +17,12 @@ const globalOptions = {
 describe('Clay 内容页面', () => {
   test('文章与视频以带名称的语义列表呈现完整 API 数据', async () => {
     const articleRows = [
-      { slug: 'a', title: '文章甲', date: '2026-08-18', summary: '摘要甲', tags: ['AI'] },
-      { slug: 'b', title: '文章乙', date: '2026-08-17', summary: '摘要乙', tags: ['Vue'] }
+      { slug: 'a', title: '文章甲', date: '2026-08-18', summary: '摘要甲', tags: ['AI'], cover: '/a.png', coverAlt: '文章甲封面' },
+      { slug: 'b', title: '文章乙', date: '2026-08-17', summary: '摘要乙', tags: ['Vue'], cover: '/b.png', coverAlt: '文章乙封面' }
     ];
     const videoRows = [
-      { id: '1', platform: 'bilibili', title: '视频甲', date: '2026-08-18', desc: '说明甲', url: '#' },
-      { id: '2', platform: 'douyin', title: '视频乙', date: '2026-08-17', desc: '说明乙', url: '#' }
+      { id: '1', bvid: 'BV1111111111', platform: 'bilibili', title: '视频甲', date: '2026-08-18', desc: '说明甲', url: '#1', pageUrl: '#1', cover: '/v1.png', stats: {} },
+      { id: '2', bvid: 'BV2222222222', platform: 'bilibili', title: '视频乙', date: '2026-08-17', desc: '说明乙', url: '#2', pageUrl: '#2', cover: '/v2.png', stats: {} }
     ];
     vi.stubGlobal('fetch', vi.fn(async (url) => ({
       json: async () => String(url).includes('articles') ? articleRows : videoRows
@@ -36,8 +36,10 @@ describe('Clay 内容页面', () => {
     const videoList = videos.get('ul[aria-label="视频列表"]');
     expect(articleList.findAll(':scope > li')).toHaveLength(2);
     expect(videoList.findAll(':scope > li')).toHaveLength(2);
-    expect(articleList.findAll('li > a')).toHaveLength(2);
-    expect(videoList.findAll('li > a')).toHaveLength(2);
+    expect(articleList.findAll('li > article')).toHaveLength(2);
+    expect(videoList.findAll('li > article')).toHaveLength(2);
+    expect(articleList.findAll('article a[href^="/articles/"]')).toHaveLength(6);
+    expect(videoList.findAll('article a')).toHaveLength(2);
     expect(articles.text()).toContain('摘要乙');
     expect(videos.text()).toContain('说明乙');
   });

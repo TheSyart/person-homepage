@@ -92,6 +92,8 @@ function listArticles(includeDraft = false) {
         title: meta.title || f.replace(/\.md$/, ''),
         date: meta.date || '',
         summary: meta.summary || '',
+        cover: meta.cover || '',
+        coverAlt: meta.coverAlt || '',
         tags: Array.isArray(meta.tags) ? meta.tags : [],
         draft: !!meta.draft
       });
@@ -112,12 +114,14 @@ function getArticle(slug) {
     title: meta.title || slug,
     date: meta.date || '',
     summary: meta.summary || '',
+    cover: meta.cover || '',
+    coverAlt: meta.coverAlt || '',
     tags: Array.isArray(meta.tags) ? meta.tags : [],
     content
   };
 }
 
-function saveArticle({ slug, title, summary, tags, date, content, draft }) {
+function saveArticle({ slug, title, summary, cover, coverAlt, tags, date, content, draft }) {
   if (!/^[\w\u4e00-\u9fa5-]{1,80}$/.test(slug)) {
     throw new Error('slug 仅允许字母/数字/中文/连字符，80 字以内');
   }
@@ -126,6 +130,8 @@ function saveArticle({ slug, title, summary, tags, date, content, draft }) {
     `title: ${title}`,
     `date: ${date || new Date().toISOString().slice(0, 10)}`,
     `summary: ${summary || ''}`,
+    ...(cover ? [`cover: ${cover}`] : []),
+    ...(coverAlt ? [`coverAlt: ${coverAlt}`] : []),
     `tags: [${(tags || []).join(', ')}]`,
     `draft: ${draft ? 'true' : 'false'}`,
     '---',

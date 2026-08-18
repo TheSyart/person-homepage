@@ -8,6 +8,7 @@ api/node_modules/
 api/data/tokens.json
 api/data/messages.json
 api/data/backups/
+api/data/video-play-cache.json
 
 # 其他
 *.log

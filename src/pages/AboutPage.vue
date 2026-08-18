@@ -2,7 +2,8 @@
 import AboutFull from '../components/home/AboutFull.vue';
 import ContactCards from '../components/home/ContactCards.vue';
 import PlatformLinks from '../components/home/PlatformLinks.vue';
-import VideoShowcase from '../components/home/VideoShowcase.vue';
+import EngineeringSkills from '../components/agents/EngineeringSkills.vue';
+import OtherRepositories from '../components/about/OtherRepositories.vue';
 </script>
 
 <template>
@@ -14,7 +15,8 @@ import VideoShowcase from '../components/home/VideoShowcase.vue';
     </header>
 
     <AboutFull />
-    <VideoShowcase />
+    <EngineeringSkills />
+    <OtherRepositories />
     <PlatformLinks />
     <ContactCards />
   </main>

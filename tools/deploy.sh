@@ -56,6 +56,10 @@ vuemark=$(curl -sk https://www.shanchen.space/ $R | grep -c "assets/index-" || t
 echo "    Vue 构建标记               -> $vuemark (期望 ≥1)"
 bili=$(curl -sk "https://www.shanchen.space/api/bilibili/x/relation/stat?vmid=1452412374" $R)
 echo "    B站代理 /api/bilibili      -> $(echo "$bili" | head -c 120)"
+profile=$(curl -sk -o /dev/null -w "%{http_code}" https://www.shanchen.space/api/profile $R)
+echo "    实时资料 /api/profile       -> $profile (期望 200)"
+videos=$(curl -sk https://www.shanchen.space/api/videos $R | grep -o '"bvid"' | wc -l | tr -d ' ')
+echo "    动态视频 /api/videos        -> $videos 条 (期望 50)"
 sj=$(curl -sk -o /dev/null -w "%{http_code}" https://www.shanchen.space/data/stats.json $R)
 echo "    /data/stats.json           -> $sj (期望 200)"
 xmas=$(curl -sk -o /dev/null -w "%{http_code}" https://www.shanchen.space/christmas/christmas.html $R)

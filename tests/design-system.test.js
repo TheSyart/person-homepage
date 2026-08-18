@@ -32,4 +32,9 @@ describe('Clay 设计系统', () => {
     expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*\.agent-core[\s\S]*animation:\s*none\s*!important/s);
     expect(css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*\.clay-spark\s*\{[^}]*display:\s*none/s);
   });
+
+  test('Hero 中文标题有完整行高和独立上下留白', () => {
+    expect(ruleFor('.agent-hero h1')).toMatch(/line-height:\s*1\.0[4-9]\s*;/);
+    expect(ruleFor('.agent-hero__intro')).toMatch(/margin:\s*clamp\(/);
+  });
 });

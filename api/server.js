@@ -4,6 +4,7 @@ const store = require('./store');
 const auth = require('./auth');
 const routesPublic = require('./routes-public');
 const routesAdmin = require('./routes-admin');
+const platforms = require('./platforms');
 
 const PORT = parseInt(process.env.PORT, 10) || 3081;
 const HOST = '127.0.0.1';
@@ -41,4 +42,5 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, HOST, () => {
   console.log(`person-api listening on http://${HOST}:${PORT}`);
+  platforms.startSchedulers();
 });

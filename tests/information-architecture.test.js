@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, test, vi } from 'vitest';
 import router from '../src/router';
 import SiteHeader from '../src/components/SiteHeader.vue';
@@ -9,6 +9,7 @@ import AboutPage from '../src/pages/AboutPage.vue';
 import VideoShowcase from '../src/components/home/VideoShowcase.vue';
 import {
   ABOUT_PARAS,
+  AGENT_SERIES,
   FEATURED_REPOS,
   HOBBIES,
   MORE_PLATFORMS,
@@ -74,16 +75,23 @@ describe('Agent 作品集信息架构', () => {
     expect(hrefs).toContain('/about');
   });
 
-  test('Agents 页面完整呈现学习路线、全部仓库与 22 项工程技能', () => {
+  test('Agents 页面恰好呈现九期视频、对应资源和两个核心仓库', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => AGENT_SERIES.map((episode) => ({
+      ...episode,
+      id: episode.bvid,
+      pageUrl: `https://www.bilibili.com/video/${episode.bvid}`,
+      title: `从零实现自己的agent第${episode.episode}期`,
+      cover: `/cover-${episode.episode}.png`,
+      stats: {}
+    })) })));
     const wrapper = mount(AgentsPage, { global: globalOptions });
+    await flushPromises();
     const text = wrapper.text();
 
-    expect(wrapper.get('ol[aria-label="Agent 学习路线"]').findAll(':scope > li')).toHaveLength(5);
-    expect(wrapper.findAll('[data-agent-lesson]')).toHaveLength(12);
-    [...FEATURED_REPOS.map((repo) => repo.name), ...OTHER_REPOS.map(([name]) => name)]
-      .forEach((name) => expect(text).toContain(name));
-    expect(wrapper.findAll('[data-skill]')).toHaveLength(22);
-    SKILLS.forEach(([, name]) => expect(text).toContain(name));
+    expect(wrapper.findAll('[data-agent-episode]')).toHaveLength(9);
+    AGENT_SERIES.forEach(({ resourceLabel }) => expect(text).toContain(resourceLabel));
+    FEATURED_REPOS.forEach(({ name }) => expect(text).toContain(name));
+    expect(wrapper.findAll('[data-skill]')).toHaveLength(0);
   });
 
   test('About 页面完整呈现 Agent 定位、个人资料、照片、爱好、平台与联系方式', () => {
@@ -101,6 +109,9 @@ describe('Agent 作品集信息架构', () => {
     MORE_PLATFORMS.forEach(({ name }) => expect(text).toContain(name));
     expect(text).toContain(PROFILE.email);
     expect(text).toContain(PROFILE.wechat);
+    expect(wrapper.findAll('[data-skill]')).toHaveLength(22);
+    SKILLS.forEach(([, name]) => expect(text).toContain(name));
+    OTHER_REPOS.forEach(([name]) => expect(text).toContain(name));
   });
 
   test('浏览器标题、SEO 与视频介绍统一采用 Agent 定位', () => {

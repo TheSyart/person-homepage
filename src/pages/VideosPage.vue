@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue';
 import { PROFILE } from '../config';
 
 const videos = ref(null);
+const playing = ref({});
+const playerErrors = ref({});
 const TONES = ['clay-surface--blue', 'clay-surface--pink', 'clay-surface--green', 'clay-surface--yellow'];
 
 onMounted(async () => {
@@ -14,6 +16,23 @@ onMounted(async () => {
     videos.value = [];
   }
 });
+
+async function play(video) {
+  playerErrors.value[video.bvid] = '';
+  try {
+    const response = await fetch(`/api/videos/${video.bvid}/play`);
+    const data = await response.json();
+    if (!response.ok || !data.url) throw new Error(data.error || '临时播放地址不可用');
+    playing.value[video.bvid] = data.url;
+  } catch (error) {
+    playerErrors.value[video.bvid] = error.message;
+  }
+}
+
+function compact(value) {
+  const number = Number(value || 0);
+  return number >= 10000 ? `${(number / 10000).toFixed(1)}万` : new Intl.NumberFormat('zh-CN').format(number);
+}
 </script>
 
 <template>
@@ -31,16 +50,19 @@ onMounted(async () => {
 
     <ul v-else-if="videos.length" class="clay-grid" aria-label="视频列表">
       <li v-for="(video, index) in videos" :key="video.id" class="clay-list-item" v-reveal="index * 60">
-        <a :href="video.url" target="_blank" rel="noopener" class="clay-card clay-surface clay-interactive"
-          :class="TONES[index % TONES.length]">
-          <div class="flex items-center justify-between gap-4 mb-5">
-            <span class="clay-tag">{{ video.platform === 'bilibili' ? 'B站' : '抖音' }}</span>
-            <time class="clay-tag font-code">{{ video.date }}</time>
+        <article class="video-card clay-surface" :class="TONES[index % TONES.length]" data-video-card>
+          <div class="video-card__media">
+            <video v-if="playing[video.bvid]" :src="playing[video.bvid]" :poster="video.cover" controls playsinline preload="metadata"></video>
+            <template v-else><img :src="video.cover" :alt="`${video.title} 视频封面`" loading="lazy" referrerpolicy="no-referrer"><button type="button" data-play-video :aria-label="`站内播放：${video.title}`" @click="play(video)"><span aria-hidden="true">▶</span></button><span class="video-card__duration">{{ video.duration }}</span></template>
           </div>
-          <h2 class="text-xl font-black leading-snug mb-3 pr-5">{{ video.title }}</h2>
-          <p v-if="video.desc" class="text-muted text-sm leading-relaxed">{{ video.desc }}</p>
-          <span class="clay-button mt-6">观看视频 →</span>
-        </a>
+          <div class="video-card__body">
+            <div class="flex items-center justify-between gap-4 mb-4"><span class="clay-tag">B站</span><time class="clay-tag font-code">{{ video.date }}</time></div>
+            <h2>{{ video.title }}</h2>
+            <p v-if="video.desc">{{ video.desc }}</p>
+            <p v-if="playerErrors[video.bvid]" class="video-card__error" role="status">{{ playerErrors[video.bvid] }}</p>
+            <div class="video-card__footer"><span>{{ compact(video.stats?.view) }} 播放 · {{ compact(video.stats?.like) }} 赞</span><a :href="video.pageUrl || video.url" target="_blank" rel="noopener" class="clay-button clay-button--small">去 B站观看 ↗</a></div>
+          </div>
+        </article>
       </li>
     </ul>
 

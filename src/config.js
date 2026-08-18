@@ -96,3 +96,69 @@ export const MORE_PLATFORMS = [
   { name: '掘金', icon: '/example/平台logo/juejin.png', url: 'https://juejin.cn/user/3125273628517148' },
   { name: '知乎', icon: '/example/平台logo/知乎.png', url: 'https://www.zhihu.com/people/thesyart-6' }
 ];
+
+export const AGENT_SERIES = [
+  {
+    episode: 1,
+    bvid: 'BV1jbXKBGECC',
+    summary: '先搭出最小 Agent 循环：接收任务、调用模型、选择工具，再把结果送回下一轮推理。',
+    resourceLabel: 'step01–step03：最小循环',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step01'
+  },
+  {
+    episode: 2,
+    bvid: 'BV19JdzBMESc',
+    summary: '继续补齐工具调用、上下文与执行边界，让演示代码开始具备可以扩展的结构。',
+    resourceLabel: 'step04–step06：工具与上下文',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step04'
+  },
+  {
+    episode: 3,
+    bvid: 'BV136oYBWEU2',
+    summary: '实现 Agent 记忆：区分当前对话、任务过程与长期资料，避免所有信息都挤在一段上下文里。',
+    resourceLabel: 'step07：Memory',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step07'
+  },
+  {
+    episode: 4,
+    bvid: 'BV13R9aB5EeL',
+    summary: '把复杂目标拆成可执行步骤，并在实际结果变化时重新规划，而不是机械地跑完最初清单。',
+    resourceLabel: 'step08：Planning',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step08'
+  },
+  {
+    episode: 5,
+    bvid: 'BV14PdwB9E6w',
+    summary: '把局部探索交给独立 Subagent，隔离被网页、命令输出和搜索结果污染的上下文。',
+    resourceLabel: 'step09：Subagent',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step09'
+  },
+  {
+    episode: 6,
+    bvid: 'BV1Jx5h6oEzV',
+    summary: '让多个 Agent 分工协作：明确角色、共享目标与交接格式，减少重复工作和互相干扰。',
+    resourceLabel: 'step10：Agent Team',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step10'
+  },
+  {
+    episode: 7,
+    bvid: 'BV1Y17h6REm5',
+    summary: '通过 MCP、Skill 与 Tool 连接外部能力，并厘清协议、可复用工作流和单次工具调用的边界。',
+    resourceLabel: 'step11：MCP 与 Skill / Tool',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step11'
+  },
+  {
+    episode: 8,
+    bvid: 'BV1acM567EES',
+    summary: '用 Hooks 在关键节点执行校验、记录与自动化动作，让 Agent 的运行过程更可控。',
+    resourceLabel: 'step12：Hooks',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/tree/main/build-agent-example/code/step12'
+  },
+  {
+    episode: 9,
+    bvid: 'BV1zAKg6kEV2',
+    summary: '从“照着步骤跑”转向目标驱动：根据环境反馈选择下一步，并持续判断任务是否真正完成。',
+    resourceLabel: '目标驱动 Agent PPT',
+    resourceUrl: 'https://github.com/TheSyart/claude-agent-examples/blob/main/ppt/%E7%AC%AC%E4%B9%9D%E6%9C%9F-%E7%9B%AE%E6%A0%87%E9%A9%B1%E5%8A%A8agent.html'
+  }
+];

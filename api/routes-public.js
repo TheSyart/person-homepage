@@ -1,6 +1,7 @@
 /* 公开接口：文章/视频/留言 */
 const express = require('express');
 const store = require('./store');
+const platforms = require('./platforms');
 
 const router = express.Router();
 
@@ -30,7 +31,30 @@ router.get('/articles/:slug', (req, res) => {
 
 /* ---- 视频 ---- */
 router.get('/videos', (req, res) => {
-  res.json(store.listVideos());
+  res.json(platforms.getVideos(req.query.series));
+});
+
+router.get('/videos/:bvid/play', async (req, res) => {
+  const { bvid } = req.params;
+  if (!/^BV[0-9A-Za-z]{10}$/.test(bvid)) {
+    return res.status(400).json({ error: '无效的 BV 号' });
+  }
+  const stableUrl = `https://www.bilibili.com/video/${bvid}`;
+  try {
+    const entry = await platforms.getPlayLink(bvid);
+    if (!entry) return res.status(404).json({ error: '视频不存在', pageUrl: stableUrl });
+    return res.json(entry);
+  } catch (error) {
+    return res.status(502).json({
+      error: '临时播放地址暂不可用，请前往 B站观看',
+      pageUrl: stableUrl
+    });
+  }
+});
+
+/* ---- 实时平台资料 ---- */
+router.get('/profile', (req, res) => {
+  res.json(platforms.getProfile());
 });
 
 /* ---- 留言 ---- */
