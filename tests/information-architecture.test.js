@@ -1,9 +1,12 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { mount } from '@vue/test-utils';
 import { describe, expect, test, vi } from 'vitest';
 import router from '../src/router';
 import SiteHeader from '../src/components/SiteHeader.vue';
 import AgentsPage from '../src/pages/AgentsPage.vue';
 import AboutPage from '../src/pages/AboutPage.vue';
+import VideoShowcase from '../src/components/home/VideoShowcase.vue';
 import {
   ABOUT_PARAS,
   FEATURED_REPOS,
@@ -98,5 +101,18 @@ describe('Agent 作品集信息架构', () => {
     MORE_PLATFORMS.forEach(({ name }) => expect(text).toContain(name));
     expect(text).toContain(PROFILE.email);
     expect(text).toContain(PROFILE.wechat);
+  });
+
+  test('浏览器标题、SEO 与视频介绍统一采用 Agent 定位', () => {
+    const indexHtml = readFileSync(path.join(process.cwd(), 'index.html'), 'utf8');
+    const routerSource = readFileSync(path.join(process.cwd(), 'src/router.js'), 'utf8');
+    const video = mount(VideoShowcase, { global: globalOptions });
+
+    expect(indexHtml).toContain('AI Agent 开源作者');
+    expect(indexHtml).not.toContain('全栈程序员');
+    expect(routerSource).toContain('AI Agent 开源作者');
+    expect(routerSource).not.toContain('全栈程序员');
+    expect(video.text()).toContain('Agent 教程');
+    expect(video.text()).not.toContain('大学生程序员');
   });
 });

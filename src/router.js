@@ -22,7 +22,7 @@ const router = createRouter({
 });
 
 router.afterEach((to) => {
-  document.title = to.name === 'home' ? '小单说AI — 全栈程序员 / 开源作者 / UP主' : `${to.meta.title} · 小单说AI`;
+  document.title = to.name === 'home' ? '小单说AI — AI Agent 开源作者 / 内容创作者' : `${to.meta.title} · 小单说AI`;
 });
 
 export default router;

@@ -30,7 +30,7 @@ const stats = useStats();
           <div><strong><CountUp :value="stats.bili.followers" /></strong><span>粉丝<span v-if="!stats.bili.live"> · 快照 {{ stats.updated }}</span></span></div>
           <div><strong>AI</strong><span>创作方向</span></div>
         </div>
-        <p class="text-sm leading-relaxed">技术教程、AI 工具实测、编程日常，记录大学生程序员的成长。</p>
+        <p class="text-sm leading-relaxed">Agent 教程、AI 工具实测与开源构建日志，记录个人智能体从原型到长期协作系统的进化。</p>
         <a :href="PROFILE.bilibiliUrl" target="_blank" rel="noopener" class="clay-button clay-button--primary mt-5">▶ 访问 B站主页</a>
       </article>
 
