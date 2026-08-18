@@ -1,5 +1,5 @@
 <script setup>
-import { PROFILE, ABOUT_PARAS, SKILLS, SCHOOL_PHOTOS, HOBBIES } from '../../config';
+import { PROFILE, ABOUT_PARAS, SCHOOL_PHOTOS, HOBBIES } from '../../config';
 
 const INFO = [
   ['博主名', PROFILE.brand],
@@ -29,13 +29,6 @@ const INFO = [
 
       <div class="about-copy">
         <p v-for="paragraph in ABOUT_PARAS" :key="paragraph">{{ paragraph }}</p>
-      </div>
-
-      <h3 class="subsection-title">技术栈</h3>
-      <div class="skill-cloud">
-        <span v-for="[file, name] in SKILLS" :key="name" class="skill-chip">
-          <img :src="`/example/技能logo/${file}.png`" :alt="name" loading="lazy">{{ name }}
-        </span>
       </div>
 
       <h3 class="subsection-title">校园一角</h3>

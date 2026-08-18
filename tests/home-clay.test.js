@@ -7,8 +7,7 @@ import {
   MORE_PLATFORMS,
   OTHER_REPOS,
   PROFILE,
-  SCHOOL_PHOTOS,
-  SKILLS
+  SCHOOL_PHOTOS
 } from '../src/config';
 
 const testStats = vi.hoisted(() => ({
@@ -89,14 +88,13 @@ describe('Clay 首页', () => {
     expect(achievements.text()).toContain(PROFILE.identity);
   });
 
-  test('完整渲染既有项目、技能、照片、爱好、平台和联系方式', async () => {
+  test('完整渲染既有项目、照片、爱好、平台和联系方式', async () => {
     const wrapper = mountHome();
     await flushPromises();
 
     const pageText = wrapper.text();
     [...FEATURED_REPOS.map((repo) => repo.name), ...OTHER_REPOS.map(([name]) => name)]
       .forEach((name) => expect(pageText).toContain(name));
-    SKILLS.forEach(([, name]) => expect(pageText).toContain(name));
     HOBBIES.forEach(([name]) => expect(pageText).toContain(name));
     MORE_PLATFORMS.forEach(({ name }) => expect(pageText).toContain(name));
 
@@ -123,7 +121,6 @@ describe('Clay 首页', () => {
     });
     SCHOOL_PHOTOS.forEach((src) => expect(sources).toContain(src));
     HOBBIES.forEach(([, src]) => expect(sources).toContain(src));
-    SKILLS.forEach(([file]) => expect(sources).toContain(`/example/技能logo/${file}.png`));
     expect(hrefs).toContain(`mailto:${PROFILE.email}`);
     expect(hrefs).toContain(PROFILE.githubUrl);
   });

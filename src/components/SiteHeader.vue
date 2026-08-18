@@ -3,8 +3,10 @@ import SealLogo from './SealLogo.vue';
 
 const LINKS = [
   { to: '/', label: '首页', exact: true },
+  { to: '/agents', label: 'Agents' },
   { to: '/articles', label: '文章' },
   { to: '/videos', label: '视频' },
+  { to: '/about', label: '关于' },
   { to: '/messages', label: '留言' }
 ];
 </script>

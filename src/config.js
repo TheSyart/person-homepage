@@ -2,11 +2,11 @@
 
 export const PROFILE = {
   brand: '小单说AI',
-  roles: ['全栈程序员', '开源作者', '技术博主', '视频创作者'],
-  tagline: '安徽三联学院计算机专业本科生。专注 Java 后端与 Vue 前端，也写 Python 爬虫和 Flutter。在 GitHub 做开源，在 B站 / 抖音讲 AI、讲编程。',
+  roles: ['Agent 开源作者', 'AI 内容创作者', 'Agent 实践者', '教程作者'],
+  tagline: '我把 Agent 的关键零件拆开、讲透、重新组装——从百行代码到能规划、记忆、协作和长期工作的个人智能体。',
   birthday: '2002.10.28',
   school: '安徽三联学院 · 计算机专业',
-  identity: '全栈程序员 / 技术博主',
+  identity: 'AI Agent 开源作者 / 内容创作者',
   hobby: '运动（篮球 · 滑雪）',
   email: '1359086121@qq.com',
   wechat: 'DaXueSheng',
@@ -85,9 +85,9 @@ export const HOBBIES = [
 
 /* 原始自我介绍三段 */
 export const ABOUT_PARAS = [
-  '我是小单说AI，一名来自安徽三联学院计算机专业的本科生。作为一名全栈程序员，我专注于 Java 后端开发和 Vue 前端技术，同时也热衷于 Python 爬虫和 Flutter 移动端开发。',
-  '我不仅是一名技术开发者，更是一名内容创作者。在 B站、抖音等平台分享 AI 与编程知识，通过视频和文章帮助更多人入门。我相信技术的力量，也相信分享的价值。',
-  '除了编程，我还热爱运动，这让我保持积极向上的生活态度，也为创作提供了源源不断的灵感。'
+  '我是小单，一个把 AI Agent 做成开源项目，也把实现过程讲给别人听的创作者。比起停留在模型演示，我更关心 Agent 怎样调用工具、保留记忆、规划任务，并把一件事真正做完。',
+  '从模型调用、工具与 Skills，到记忆、任务规划、子代理、Agent Team、MCP 和 Hooks，我正在用代码、视频和真实项目搭建一条可以复现的 Agent 学习路线。claude-agent-examples 负责把原理逐步拆开，emperor-agent 则尝试把这些能力装进一个可以长期使用的个人工作空间。',
+  '我也持续体验 Claude、Codex、DeepSeek、Kimi 等 AI 编程工具。关注的不是简单的模型排行榜，而是它们能否进入真实开发流程、稳定完成任务，并逐渐成为可以长期协作的个人 Agent。校园经历、传统开发技能和兴趣仍是我的背景，但不再占据首页的中心位置。'
 ];
 
 export const MORE_PLATFORMS = [
