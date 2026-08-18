@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============ 纸感编辑风设计系统 ============ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-paper text-ink antialiased;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+}
+
+::selection {
+  background: rgba(194, 58, 34, .16);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #fafaf7;
+}
+::-webkit-scrollbar-thumb {
+  background: #d8d5cc;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b8b4a8;
+}
+
+/* 宋体标题 */
+.font-serif-sc {
+  font-family: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", SimSun, serif;
+}
+
+/* 发丝线 */
+.hairline {
+  border-color: #e7e4dc;
+}
+
+/* 朱砂下划线链接 */
+.link-vermilion {
+  @apply text-ink;
+  text-decoration: none;
+  background-image: linear-gradient(#c23a22, #c23a22);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  transition: background-size .3s ease, color .2s ease;
+}
+.link-vermilion:hover {
+  color: #c23a22;
+  background-size: 100% 1px;
+}
+
+/* LIVE 小点（朱砂版） */
+.live-dot {
+  @apply inline-block w-1.5 h-1.5 rounded-full animate-pulseDot;
+  background: #c23a22;
+}
+
+/* 滚动淡入 */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.reveal-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============ 文章排版（.article-body） ============ */
+.article-body {
+  @apply leading-loose text-[1.05rem];
+  color: #2a2926;
+}
+.article-body h1, .article-body h2, .article-body h3 {
+  font-family: "Songti SC", "STSong", "Noto Serif SC", SimSun, serif;
+  @apply font-bold text-ink;
+}
+.article-body h1 { @apply text-3xl mt-10 mb-5; }
+.article-body h2 { @apply text-2xl mt-10 mb-4 pb-2 border-b hairline; }
+.article-body h3 { @apply text-xl mt-8 mb-3; }
+.article-body p { @apply my-4; }
+.article-body a { @apply underline decoration-1 underline-offset-4; color: #c23a22; }
+.article-body ul, .article-body ol { @apply my-4 pl-6; }
+.article-body ul { list-style: disc; }
+.article-body ol { list-style: decimal; }
+.article-body li { @apply my-1.5; }
+.article-body blockquote {
+  @apply my-5 pl-4 py-1 italic;
+  border-left: 3px solid #c23a22;
+  color: #73706a;
+  background: rgba(194, 58, 34, .04);
+}
+.article-body code {
+  @apply font-code text-[.9em] px-1.5 py-0.5 rounded;
+  background: #f0eee7;
+  color: #b03a20;
+}
+.article-body pre {
+  @apply my-5 p-4 rounded-lg overflow-x-auto text-sm font-code;
+  background: #1c1b19;
+  color: #e8e6e0;
+}
+.article-body pre code {
+  background: transparent;
+  color: inherit;
+  @apply p-0;
+}
+.article-body img { @apply rounded-lg my-5; }
+.article-body hr { @apply my-8 hairline; }
+.article-body table { @apply w-full my-5 text-sm; }
+.article-body th, .article-body td { @apply border hairline px-3 py-2 text-left; }
+.article-body th { background: #f5f4ef; }

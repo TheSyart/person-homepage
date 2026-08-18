@@ -1,0 +1,34 @@
+[
+  {
+    "id": "v1",
+    "platform": "bilibili",
+    "title": "大学生创业vlog第四期",
+    "url": "https://space.bilibili.com/1452412374",
+    "date": "2025-10-17",
+    "desc": "创业日记系列：毕业生就业、开学季的那些事"
+  },
+  {
+    "id": "v2",
+    "platform": "bilibili",
+    "title": "你还在觉得程序员很牛？零基础开发一款浏览器插件 你也可以！",
+    "url": "https://space.bilibili.com/1452412374",
+    "date": "2025-10-14",
+    "desc": "浏览器插件零基础实战教程"
+  },
+  {
+    "id": "v3",
+    "platform": "bilibili",
+    "title": "什么是程序员？",
+    "url": "https://space.bilibili.com/1452412374",
+    "date": "2025-10-10",
+    "desc": "hello world，生活不会辜负每一个努力的人"
+  },
+  {
+    "id": "v4",
+    "platform": "douyin",
+    "title": "大学生创业vlog第四期",
+    "url": "https://www.douyin.com/user/MS4wLjABAAAAk5lgbm96yoPPEoGXoY3MIp4S8voya0dzcnG0Lom5-SI?from_tab_name=main",
+    "date": "2025-10-17",
+    "desc": "创业日记系列短视频版"
+  }
+]

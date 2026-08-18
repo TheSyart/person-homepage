@@ -1,0 +1,20 @@
+{
+  "updated": "2026-08-18",
+  "bilibili": {
+    "followers": 3164,
+    "name": "小单说AI",
+    "sign": "分享ai 学习ai 诸君共进步"
+  },
+  "douyin": {
+    "followers": 2000,
+    "likes": 0,
+    "works": 6
+  },
+  "github": {
+    "followers": 18,
+    "repos": 9,
+    "totalStars": 530,
+    "cae": { "stars": 355, "forks": 94 },
+    "ea": { "stars": 175, "forks": 40 }
+  }
+}
