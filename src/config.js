@@ -31,7 +31,7 @@ export const SNAPSHOT = {
     ea: { stars: 175, forks: 40 }
   },
   bilibili: { followers: 3164, name: '小单说AI', face: '', sign: '分享ai 学习ai 诸君共进步' },
-  douyin: { followers: 2000, likes: 0, works: 6 }
+  douyin: { followers: null, likes: null, works: null }
 };
 
 export const FEATURED_REPOS = [

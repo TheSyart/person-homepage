@@ -43,10 +43,10 @@ const stats = useStats();
           </div>
         </div>
         <div class="creator-stats">
-          <div><strong><CountUp :value="stats.douyin.followers" /></strong><span>粉丝 · {{ stats.updated }} 更新</span></div>
           <div><strong class="text-lg">{{ PROFILE.douyinId }}</strong><span>抖音号</span></div>
+          <div><strong>AGENT</strong><span>创作方向</span></div>
         </div>
-        <p class="text-sm leading-relaxed">AI 工具实测、编程技巧分享，用短视频让技术更简单。</p>
+        <p class="text-sm leading-relaxed">AI Agent 实践、工具观察与教程切片，在短视频里同步更新。</p>
         <a :href="PROFILE.douyinUrl" target="_blank" rel="noopener" class="clay-button clay-button--pink mt-5">♪ 访问抖音主页</a>
       </article>
     </div>
