@@ -1,21 +1,14 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { describe, expect, test, vi } from 'vitest';
 import HomePage from '../src/pages/HomePage.vue';
-import {
-  FEATURED_REPOS,
-  HOBBIES,
-  MORE_PLATFORMS,
-  OTHER_REPOS,
-  PROFILE,
-  SCHOOL_PHOTOS
-} from '../src/config';
+import { FEATURED_REPOS, PROFILE } from '../src/config';
 
 const testStats = vi.hoisted(() => ({
   github: {
     followers: 18,
     repos: 9,
-    totalStars: 530,
-    cae: { stars: 355, forks: 94 },
+    totalStars: 533,
+    cae: { stars: 358, forks: 94 },
     ea: { stars: 175, forks: 40 },
     live: true
   },
@@ -26,36 +19,30 @@ const testStats = vi.hoisted(() => ({
     sign: '分享ai 学习ai 诸君共进步',
     live: true
   },
-  douyin: { followers: 2000, likes: 0, works: 6 },
+  douyin: { followers: null, likes: null, works: null },
   updated: '2026-08-18'
 }));
 
-vi.mock('../src/composables/useStats', () => ({
-  useStats: () => testStats
-}));
-
-const articles = [
-  { slug: 'hello-new-home', title: '你好，新主页', date: '2026-08-18', summary: '主页第三次重构', tags: ['随笔', '重构'] },
-  { slug: 'why-all-in-ai', title: '我为什么 all in AI', date: '2026-08-18', summary: '一个普通本科生的转型思考', tags: ['AI', '思考'] }
-];
-
-const videos = [
-  { id: 'v1', platform: 'bilibili', title: '大学生创业vlog第四期', date: '2025-10-17', desc: '创业日记系列', url: '#' },
-  { id: 'v2', platform: 'bilibili', title: '零基础开发一款浏览器插件', date: '2025-10-14', desc: '浏览器插件教程', url: '#' },
-  { id: 'v3', platform: 'bilibili', title: '什么是程序员？', date: '2025-10-10', desc: 'hello world', url: '#' },
-  { id: 'v4', platform: 'douyin', title: '大学生创业vlog第四期短视频版', date: '2025-10-17', desc: '短视频版', url: '#' }
-];
+vi.mock('../src/composables/useStats', () => ({ useStats: () => testStats }));
 
 const RouterLinkStub = {
   props: ['to'],
   template: '<a :href="typeof to === \'string\' ? to : to.path"><slot /></a>'
 };
 
-function mountHome() {
-  vi.stubGlobal('fetch', vi.fn(async (url) => ({
-    json: async () => String(url).includes('articles') ? articles : videos
-  })));
+const rows = {
+  articles: [
+    { slug: 'agent-memory', title: 'Agent 记忆', date: '2026-08-18', summary: '三层记忆', tags: ['Agent'] }
+  ],
+  videos: [
+    { id: 'v1', platform: 'bilibili', title: '什么是 Agent', date: '2026-08-18', desc: 'Agent 入门', url: '#v1' }
+  ]
+};
 
+function mountHome(fetchImpl = async (url) => ({
+  json: async () => String(url).includes('articles') ? rows.articles : rows.videos
+})) {
+  vi.stubGlobal('fetch', vi.fn(fetchImpl));
   return mount(HomePage, {
     global: {
       directives: { reveal: {} },
@@ -64,64 +51,35 @@ function mountHome() {
   });
 }
 
-describe('Clay 首页', () => {
-  test('减少动态偏好下直接展示完整角色，不启动打字循环', async () => {
-    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true })));
+describe('Clay 首页回归', () => {
+  test('GitHub 头像加载失败时在同一核心位置显示品牌兜底', async () => {
     const wrapper = mountHome();
-    await flushPromises();
-
-    expect(wrapper.get('.hero-role').text()).toContain(PROFILE.roles[0]);
-  });
-
-  test('使用真人头像并把四项核心成就作为可访问列表展示', () => {
-    const wrapper = mountHome();
-
     const avatar = wrapper.get('img[alt="小单说AI GitHub 头像"]');
+
     expect(avatar.attributes('src')).toBe(PROFILE.githubAvatar);
-
-    const achievements = wrapper.get('ul[aria-label="个人成就"]');
-    expect(achievements.findAll(':scope > li')).toHaveLength(4);
-    expect(achievements.findAll('li > a')).toHaveLength(3);
-    expect(achievements.text()).toContain('GitHub Stars');
-    expect(achievements.text()).toContain('B站粉丝');
-    expect(achievements.text()).toContain('抖音粉丝');
-    expect(achievements.text()).toContain(PROFILE.identity);
+    await avatar.trigger('error');
+    expect(wrapper.find('img[alt="小单说AI GitHub 头像"]').exists()).toBe(false);
+    expect(wrapper.get('.agent-core__portrait b').text()).toBe('单');
   });
 
-  test('完整渲染既有项目、照片、爱好、平台和联系方式', async () => {
-    const wrapper = mountHome();
+  test('内容 API 失败时 Hero 保持可用并显示两个独立空状态', async () => {
+    const wrapper = mountHome(async () => { throw new Error('offline'); });
     await flushPromises();
 
-    const pageText = wrapper.text();
-    [...FEATURED_REPOS.map((repo) => repo.name), ...OTHER_REPOS.map(([name]) => name)]
-      .forEach((name) => expect(pageText).toContain(name));
-    HOBBIES.forEach(([name]) => expect(pageText).toContain(name));
-    MORE_PLATFORMS.forEach(({ name }) => expect(pageText).toContain(name));
-
-    expect(wrapper.findAll('img[alt^="校园照片"]')).toHaveLength(SCHOOL_PHOTOS.length);
-    expect(pageText).toContain(PROFILE.email);
-    expect(pageText).toContain(PROFILE.wechat);
-    expect(pageText).toContain('TheSyart');
-    articles.forEach(({ title }) => expect(pageText).toContain(title));
-    videos.slice(0, 3).forEach(({ title }) => expect(pageText).toContain(title));
+    expect(wrapper.get('#home-title').text()).toBe('把 AI Agent 做活。');
+    const emptyStates = wrapper.findAll('.latest-signals .empty-panel');
+    expect(emptyStates).toHaveLength(2);
+    expect(emptyStates[0].text()).toBe('文章整理中。');
+    expect(emptyStates[1].text()).toBe('视频整理中。');
   });
 
-  test('配置中的项目、平台、联系方式与本地图片路径都保持可访问', async () => {
+  test('旗舰项目保留真实外链且探索入口覆盖四个内容方向', async () => {
     const wrapper = mountHome();
     await flushPromises();
-
     const hrefs = wrapper.findAll('a').map((link) => link.attributes('href'));
-    const sources = wrapper.findAll('img').map((image) => decodeURI(image.attributes('src')));
 
     FEATURED_REPOS.forEach(({ url }) => expect(hrefs).toContain(url));
-    OTHER_REPOS.forEach(([name]) => expect(hrefs).toContain(`https://github.com/TheSyart/${name}`));
-    MORE_PLATFORMS.forEach(({ url, icon }) => {
-      expect(hrefs).toContain(url);
-      expect(sources).toContain(icon);
-    });
-    SCHOOL_PHOTOS.forEach((src) => expect(sources).toContain(src));
-    HOBBIES.forEach(([, src]) => expect(sources).toContain(src));
-    expect(hrefs).toContain(`mailto:${PROFILE.email}`);
-    expect(hrefs).toContain(PROFILE.githubUrl);
+    ['/agents', '/about', '/articles', '/videos'].forEach((path) => expect(hrefs).toContain(path));
+    expect(wrapper.get('nav[aria-label="继续探索"]').findAll('a')).toHaveLength(4);
   });
 });
