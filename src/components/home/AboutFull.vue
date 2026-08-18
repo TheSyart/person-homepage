@@ -10,46 +10,48 @@ const INFO = [
 </script>
 
 <template>
-  <section class="py-16 border-b hairline">
-    <h2 class="font-serifSc text-3xl font-bold mb-8" v-reveal>关于我</h2>
-
-    <!-- 信息卡 -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 mb-10" v-reveal="60">
-      <div v-for="[label, val] in INFO" :key="label">
-        <p class="text-xs text-faint tracking-widest mb-1.5">{{ label }}</p>
-        <p class="font-semibold">{{ val }}</p>
+  <section class="about-section" aria-labelledby="about-heading">
+    <div class="section-heading" v-reveal>
+      <span class="section-index" style="background: var(--clay-green)">04</span>
+      <div class="section-heading-copy">
+        <h2 id="about-heading">关于我</h2>
+        <p>技术、创作与生活，都是同一个人的不同侧面。</p>
       </div>
+      <span class="section-dots" aria-hidden="true"><i></i><i></i><i></i></span>
     </div>
 
-    <!-- 自我介绍 -->
-    <div class="max-w-3xl mb-12" v-reveal="120">
-      <p v-for="(p, i) in ABOUT_PARAS" :key="i" class="text-body leading-loose mb-4">{{ p }}</p>
-    </div>
+    <div class="about-shell clay-surface clay-surface--green" v-reveal="60">
+      <div class="identity-grid">
+        <div v-for="[label, value] in INFO" :key="label" class="identity-card">
+          <span>{{ label }}</span><strong>{{ value }}</strong>
+        </div>
+      </div>
 
-    <!-- 技能墙（22 全量） -->
-    <h3 class="font-serifSc text-xl font-bold mb-5" v-reveal>技术栈</h3>
-    <div class="flex flex-wrap gap-2.5 mb-12" v-reveal="60">
-      <span v-for="[file, name] in SKILLS" :key="name"
-        class="inline-flex items-center gap-2 border hairline bg-card hover:border-vermilion/50 rounded-full pl-1.5 pr-3.5 py-1 text-sm transition-colors">
-        <img :src="`/example/技能logo/${file}.png`" :alt="name" class="w-6 h-6" loading="lazy">{{ name }}
-      </span>
-    </div>
+      <div class="about-copy">
+        <p v-for="paragraph in ABOUT_PARAS" :key="paragraph">{{ paragraph }}</p>
+      </div>
 
-    <!-- 校园照片（10 全量） -->
-    <h3 class="font-serifSc text-xl font-bold mb-5" v-reveal>校园一角</h3>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-12" v-reveal="60">
-      <img v-for="(src, i) in SCHOOL_PHOTOS" :key="i" :src="src" alt="校园" loading="lazy"
-        class="rounded-lg h-28 w-full object-cover border hairline transition-transform duration-300 hover:scale-[1.03]">
-    </div>
+      <h3 class="subsection-title">技术栈</h3>
+      <div class="skill-cloud">
+        <span v-for="[file, name] in SKILLS" :key="name" class="skill-chip">
+          <img :src="`/example/技能logo/${file}.png`" :alt="name" loading="lazy">{{ name }}
+        </span>
+      </div>
 
-    <!-- 兴趣爱好（压缩版） -->
-    <h3 class="font-serifSc text-xl font-bold mb-5" v-reveal>兴趣爱好</h3>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3" v-reveal="60">
-      <figure v-for="[name, src] in HOBBIES" :key="name" class="group">
-        <img :src="src" :alt="name" loading="lazy"
-          class="rounded-lg h-28 w-full object-cover border hairline transition-transform duration-300 group-hover:scale-[1.03]">
-        <figcaption class="text-center text-xs text-muted mt-2">{{ name }}</figcaption>
-      </figure>
+      <h3 class="subsection-title">校园一角</h3>
+      <div class="photo-grid">
+        <figure v-for="(src, index) in SCHOOL_PHOTOS" :key="src" class="photo-card">
+          <img :src="src" :alt="`校园照片 ${index + 1}`" loading="lazy">
+        </figure>
+      </div>
+
+      <h3 class="subsection-title">兴趣爱好</h3>
+      <div class="hobby-grid">
+        <figure v-for="[name, src] in HOBBIES" :key="name" class="hobby-card">
+          <img :src="src" :alt="name" loading="lazy">
+          <figcaption>{{ name }}</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 </template>

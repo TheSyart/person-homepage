@@ -11,151 +11,169 @@ import { PROFILE } from '../config';
 import { useStats } from '../composables/useStats';
 
 const stats = useStats();
+const avatarFailed = ref(false);
 
-/* 打字机 */
 const typed = ref('');
-let ri = 0, ci = 0, deleting = false, timer = null;
+let ri = 0;
+let ci = 0;
+let deleting = false;
+let timer = null;
+
 function tick() {
   const word = PROFILE.roles[ri];
   if (!deleting) {
-    ci++;
+    ci += 1;
     typed.value = word.slice(0, ci);
-    if (ci === word.length) { deleting = true; timer = setTimeout(tick, 1700); return; }
+    if (ci === word.length) {
+      deleting = true;
+      timer = setTimeout(tick, 1700);
+      return;
+    }
   } else {
-    ci--;
+    ci -= 1;
     typed.value = word.slice(0, ci);
-    if (ci === 0) { deleting = false; ri = (ri + 1) % PROFILE.roles.length; }
+    if (ci === 0) {
+      deleting = false;
+      ri = (ri + 1) % PROFILE.roles.length;
+    }
   }
   timer = setTimeout(tick, deleting ? 55 : 130);
 }
 
-/* 最新文章/视频（运行时 API） */
 const articles = ref([]);
 const videos = ref([]);
 const contentReady = ref(false);
 
 onMounted(async () => {
-  timer = setTimeout(tick, 600);
+  if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    typed.value = PROFILE.roles[0];
+  } else {
+    timer = setTimeout(tick, 600);
+  }
   try {
-    const [a, v] = await Promise.all([
-      fetch('/api/articles').then((r) => r.json()),
-      fetch('/api/videos').then((r) => r.json())
+    const [articleResponse, videoResponse] = await Promise.all([
+      fetch('/api/articles').then((response) => response.json()),
+      fetch('/api/videos').then((response) => response.json())
     ]);
-    if (Array.isArray(a)) articles.value = a.slice(0, 3);
-    if (Array.isArray(v)) videos.value = v.slice(0, 3);
-  } catch { /* API 未就绪时静默 */ }
+    if (Array.isArray(articleResponse)) articles.value = articleResponse.slice(0, 3);
+    if (Array.isArray(videoResponse)) videos.value = videoResponse.slice(0, 3);
+  } catch {
+    // API 未就绪时使用页面内的空状态，其他静态资料仍完整可见。
+  }
   contentReady.value = true;
 });
+
 onUnmounted(() => clearTimeout(timer));
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto px-6">
-
-    <!-- ═══ 1. 编辑式 Hero ═══ -->
-    <section class="pt-20 pb-16 border-b hairline">
-      <div class="flex items-center gap-4 mb-10" v-reveal>
-        <SealLogo />
-        <span class="text-xs tracking-[.35em] text-faint">XIAODAN TALKS AI</span>
+  <main class="home-main site-shell">
+    <section class="hero-story" aria-labelledby="home-title">
+      <div class="hero-portrait" v-reveal>
+        <div class="hero-avatar-shell">
+          <img v-if="!avatarFailed" :src="PROFILE.githubAvatar" alt="小单说AI GitHub 头像"
+            class="hero-avatar" @error="avatarFailed = true">
+          <div v-else class="hero-avatar grid place-items-center text-7xl font-black" aria-label="小单说AI 头像加载失败">单</div>
+        </div>
+        <div class="hero-seal"><SealLogo /></div>
       </div>
 
-      <h1 class="font-serifSc text-5xl md:text-7xl font-bold leading-[1.15] mb-6" v-reveal="60">
-        我是小单说AI，<br>
-        一名<span class="text-vermilion">{{ typed }}</span><span class="animate-caretBlink text-vermilion">|</span>
-      </h1>
-
-      <p class="text-muted leading-loose max-w-2xl mb-10" v-reveal="140">
-        {{ PROFILE.tagline }}
-      </p>
-
-      <!-- 2. 实时数据排版行 -->
-      <div class="flex flex-wrap items-center gap-x-10 gap-y-4 mb-12 text-[15px]" v-reveal="220">
-        <a :href="PROFILE.githubUrl" target="_blank" rel="noopener" class="group flex items-baseline gap-2">
-          <b class="font-code text-2xl text-ink group-hover:text-vermilion transition-colors">
-            <CountUp :value="stats.github.totalStars" suffix="+" />
-          </b>
-          <span class="text-muted">GitHub Stars</span>
-          <span v-if="stats.github.live" class="live-dot" title="实时"></span>
-        </a>
-        <a :href="PROFILE.bilibiliUrl" target="_blank" rel="noopener" class="group flex items-baseline gap-2">
-          <b class="font-code text-2xl text-ink group-hover:text-vermilion transition-colors">
-            <CountUp :value="stats.bili.followers" />
-          </b>
-          <span class="text-muted">B站粉丝</span>
-          <span v-if="stats.bili.live" class="live-dot" title="实时"></span>
-        </a>
-        <a :href="PROFILE.douyinUrl" target="_blank" rel="noopener" class="group flex items-baseline gap-2">
-          <b class="font-code text-2xl text-ink group-hover:text-vermilion transition-colors">
-            <CountUp :value="stats.douyin.followers" />
-          </b>
-          <span class="text-muted">抖音粉丝</span>
-        </a>
-      </div>
-
-      <div class="flex flex-wrap gap-4" v-reveal="300">
-        <router-link to="/articles"
-          class="inline-flex items-center bg-vermilion hover:bg-vermilionDark text-paper font-medium px-7 py-3 rounded transition-colors">
-          读我的文章
-        </router-link>
-        <router-link to="/messages"
-          class="inline-flex items-center border hairline hover:border-vermilion hover:text-vermilion text-ink font-medium px-7 py-3 rounded bg-card transition-colors">
-          给我留言
-        </router-link>
+      <div class="hero-copy">
+        <p class="hero-kicker" v-reveal="40">XIAODAN TALKS AI</p>
+        <h1 id="home-title" class="hero-title" v-reveal="90">我是<br>小单说AI</h1>
+        <p class="hero-role" v-reveal="140">
+          一名<span>{{ typed }}</span><span class="animate-caretBlink" aria-hidden="true">|</span>
+        </p>
+        <p class="hero-tagline" v-reveal="190">{{ PROFILE.tagline }}</p>
+        <div class="hero-actions" v-reveal="240">
+          <router-link to="/articles" class="clay-button clay-button--primary">读我的文章</router-link>
+          <router-link to="/messages" class="clay-button clay-button--pink">给我留言</router-link>
+        </div>
       </div>
     </section>
 
-    <!-- 3. 开源项目精选（GitHub 实时） -->
-    <GithubShowcase />
+    <ul class="achievement-tray" aria-label="个人成就" v-reveal>
+      <li>
+        <a :href="PROFILE.githubUrl" target="_blank" rel="noopener"
+          class="achievement clay-surface clay-surface--blue clay-interactive">
+          <strong class="achievement-value"><CountUp :value="stats.github.totalStars" suffix="+" /></strong>
+          <span class="achievement-label">GitHub Stars <i v-if="stats.github.live" class="live-dot ml-2" title="实时数据"></i></span>
+        </a>
+      </li>
+      <li>
+        <a :href="PROFILE.bilibiliUrl" target="_blank" rel="noopener"
+          class="achievement clay-surface clay-surface--pink clay-interactive">
+          <strong class="achievement-value"><CountUp :value="stats.bili.followers" /></strong>
+          <span class="achievement-label">B站粉丝 <i v-if="stats.bili.live" class="live-dot ml-2" title="实时数据"></i></span>
+        </a>
+      </li>
+      <li>
+        <a :href="PROFILE.douyinUrl" target="_blank" rel="noopener"
+          class="achievement clay-surface clay-surface--green clay-interactive">
+          <strong class="achievement-value"><CountUp :value="stats.douyin.followers" /></strong>
+          <span class="achievement-label">抖音粉丝 · {{ stats.updated }} 更新</span>
+        </a>
+      </li>
+      <li>
+        <div class="achievement clay-surface clay-surface--yellow">
+          <strong class="achievement-value achievement-identity">{{ PROFILE.identity }}</strong>
+          <span class="achievement-label">{{ PROFILE.hobby }}</span>
+        </div>
+      </li>
+    </ul>
 
-    <!-- 4. 视频创作双卡（B站实时 / 抖音动态） -->
-    <VideoShowcase />
+    <div class="story-grid">
+      <GithubShowcase />
+      <VideoShowcase />
+    </div>
 
-    <!-- 5. 最新文章 -->
-    <section class="py-16 border-b hairline">
-      <div class="flex items-end justify-between mb-8" v-reveal>
-        <h2 class="font-serifSc text-3xl font-bold">最新文章</h2>
-        <router-link to="/articles" class="link-vermilion text-sm">全部文章</router-link>
+    <section class="content-showcase" aria-labelledby="content-heading">
+      <div class="section-heading" v-reveal>
+        <span class="section-index">03</span>
+        <div class="section-heading-copy">
+          <h2 id="content-heading">最近更新</h2>
+          <p>文章与视频，记录我正在做的事。</p>
+        </div>
+        <span class="section-dots" aria-hidden="true"><i></i><i></i><i></i></span>
       </div>
-      <div v-if="articles.length">
-        <router-link v-for="a in articles" :key="a.slug" :to="`/articles/${a.slug}`"
-          class="block group py-5 border-b hairline last:border-0" v-reveal>
-          <div class="flex items-baseline justify-between gap-4">
-            <h3 class="font-serifSc text-xl font-bold group-hover:text-vermilion transition-colors">{{ a.title }}</h3>
-            <time class="text-faint text-sm font-code shrink-0">{{ a.date }}</time>
+
+      <div class="content-showcase-grid">
+        <div class="content-column clay-surface clay-surface--yellow" v-reveal="50">
+          <div class="card-topline mb-5">
+            <h3 class="text-xl font-black">最新文章</h3>
+            <router-link to="/articles" class="link-vermilion text-sm">全部文章</router-link>
           </div>
-          <p class="text-muted text-sm mt-2 leading-relaxed">{{ a.summary }}</p>
-        </router-link>
+          <div v-if="articles.length" class="content-column-list">
+            <router-link v-for="article in articles" :key="article.slug" :to="`/articles/${article.slug}`" class="content-row">
+              <h3>{{ article.title }}</h3>
+              <time>{{ article.date }}</time>
+              <p class="mt-2">{{ article.summary }}</p>
+            </router-link>
+          </div>
+          <p v-else class="empty-panel">{{ contentReady ? '文章整理中，先来看看视频吧。' : '加载中…' }}</p>
+        </div>
+
+        <div class="content-column clay-surface clay-surface--green" v-reveal="100">
+          <div class="card-topline mb-5">
+            <h3 class="text-xl font-black">最新视频</h3>
+            <router-link to="/videos" class="link-vermilion text-sm">全部视频</router-link>
+          </div>
+          <div v-if="videos.length" class="content-column-list">
+            <a v-for="video in videos" :key="video.id" :href="video.url" target="_blank" rel="noopener" class="content-row">
+              <div class="card-topline">
+                <span class="clay-tag">{{ video.platform === 'bilibili' ? 'B站' : '抖音' }}</span>
+                <time>{{ video.date }}</time>
+              </div>
+              <h3 class="mt-3">{{ video.title }}</h3>
+            </a>
+          </div>
+          <p v-else class="empty-panel">{{ contentReady ? '视频整理中。' : '加载中…' }}</p>
+        </div>
       </div>
-      <p v-else class="text-faint text-sm py-6" v-reveal>{{ contentReady ? '文章整理中，先来看看视频吧。' : '加载中…' }}</p>
     </section>
 
-    <!-- 6. 最新视频 -->
-    <section class="py-16 border-b hairline">
-      <div class="flex items-end justify-between mb-8" v-reveal>
-        <h2 class="font-serifSc text-3xl font-bold">最新视频</h2>
-        <router-link to="/videos" class="link-vermilion text-sm">全部视频</router-link>
-      </div>
-      <div v-if="videos.length" class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <a v-for="v in videos" :key="v.id" :href="v.url" target="_blank" rel="noopener"
-          class="group border hairline rounded-lg p-5 bg-card hover:border-vermilion/50 transition-colors" v-reveal>
-          <span class="inline-block text-xs px-2 py-0.5 rounded mb-3"
-            :class="v.platform === 'bilibili' ? 'bg-sky-50 text-sky-700' : 'bg-rose-50 text-rose-600'">
-            {{ v.platform === 'bilibili' ? 'B站' : '抖音' }}
-          </span>
-          <h3 class="font-bold leading-snug group-hover:text-vermilion transition-colors">{{ v.title }}</h3>
-          <time class="text-faint text-xs font-code mt-3 block">{{ v.date }}</time>
-        </a>
-      </div>
-      <p v-else class="text-faint text-sm py-6" v-reveal>{{ contentReady ? '视频整理中。' : '加载中…' }}</p>
-    </section>
-
-    <!-- 7-10. 关于我完整版 / 技能墙 / 校园照片 / 兴趣爱好 -->
     <AboutFull />
-
-    <!-- 11. 更多平台 -->
     <PlatformLinks />
-
-    <!-- 12. 联系我 -->
     <ContactCards />
-  </div>
+  </main>
 </template>

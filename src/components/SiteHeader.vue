@@ -10,26 +10,24 @@ const LINKS = [
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-paper/90 backdrop-blur border-b hairline">
-    <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-      <router-link to="/" class="flex items-center gap-3 group">
+  <header class="site-header">
+    <div class="site-shell site-nav-shell clay-surface">
+      <router-link to="/" class="brand-home" aria-label="小单说AI 首页">
         <SealLogo />
-        <span class="font-serifSc font-bold text-xl tracking-wide group-hover:text-vermilion transition-colors">小单说AI</span>
+        <span>小单说AI</span>
       </router-link>
 
-      <nav class="flex items-center gap-1 sm:gap-2">
+      <nav class="site-nav" aria-label="主导航">
         <router-link v-for="l in LINKS" :key="l.to" :to="l.to"
-          class="px-3 py-2 text-[15px] transition-colors relative"
+          class="nav-link"
           :class="(l.exact ? $route.path === l.to : $route.path.startsWith(l.to))
-            ? 'text-vermilion font-semibold'
-            : 'text-muted hover:text-ink'">
+            ? 'nav-link--active'
+            : ''">
           {{ l.label }}
-          <span v-if="(l.exact ? $route.path === l.to : $route.path.startsWith(l.to))"
-            class="absolute left-3 right-3 -bottom-[1px] h-[2px] bg-vermilion"></span>
         </router-link>
         <a href="https://github.com/TheSyart" target="_blank" rel="noopener"
-          class="ml-2 hidden sm:inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink border hairline rounded-full px-3.5 py-1.5 transition-colors bg-card">
-          <img src="/example/平台logo/github.png" alt="GitHub" class="w-4 h-4 rounded-sm">GitHub
+          class="nav-link github-nav">
+          <img src="/example/平台logo/github.png" alt="">GitHub
         </a>
       </nav>
     </div>

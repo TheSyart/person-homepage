@@ -4,15 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: '#fafaf7',
+        paper: '#f6f1ff',
         card: '#ffffff',
-        ink: '#1c1b19',
-        body: '#2a2926',
-        muted: '#73706a',
-        faint: '#a8a49a',
-        line: '#e7e4dc',
-        vermilion: '#c23a22',
-        vermilionDark: '#a82f1b'
+        ink: '#5b4a6e',
+        body: '#5b4a6e',
+        muted: '#5b4a6e',
+        faint: '#5b4a6e',
+        line: '#8a7aa0',
+        vermilion: '#5b4a6e',
+        vermilionDark: '#5b4a6e',
+        clayBlue: '#bde0fe',
+        clayPink: '#ffd6e0',
+        clayGreen: '#c8f7dc',
+        clayYellow: '#fff1c9'
       },
       fontFamily: {
         serifSc: ['Songti SC', 'STSong', 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', 'serif'],

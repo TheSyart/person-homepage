@@ -1,10 +1,9 @@
 <template>
-  <div class="max-w-4xl mx-auto px-6 pt-24 pb-16 text-center">
-    <p class="font-serifSc text-8xl font-bold text-ink mb-6">404</p>
-    <p class="text-muted mb-10">这一页走丢了。</p>
-    <router-link to="/"
-      class="inline-flex items-center bg-vermilion hover:bg-vermilionDark text-paper font-medium px-7 py-3 rounded transition-colors">
-      回到首页
-    </router-link>
-  </div>
+  <main class="site-shell page-wrap not-found-shell" aria-labelledby="not-found-title">
+    <section class="not-found-card clay-surface clay-surface--pink">
+      <h1 id="not-found-title" class="not-found-code">404</h1>
+      <p class="text-muted font-bold mt-7 mb-8">这一页走丢了。</p>
+      <router-link to="/" class="clay-button clay-button--primary">回到首页</router-link>
+    </section>
+  </main>
 </template>

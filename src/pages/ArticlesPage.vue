@@ -2,12 +2,13 @@
 import { ref, onMounted } from 'vue';
 
 const articles = ref(null);
+const TONES = ['clay-surface--blue', 'clay-surface--pink', 'clay-surface--green', 'clay-surface--yellow'];
 
 onMounted(async () => {
   try {
-    const r = await fetch('/api/articles');
-    const j = await r.json();
-    articles.value = Array.isArray(j) ? j : [];
+    const response = await fetch('/api/articles');
+    const data = await response.json();
+    articles.value = Array.isArray(data) ? data : [];
   } catch {
     articles.value = [];
   }
@@ -15,28 +16,32 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto px-6 pt-16">
-    <p class="text-xs tracking-[.35em] text-faint mb-4" v-reveal>ARTICLES</p>
-    <h1 class="font-serifSc text-4xl md:text-5xl font-bold mb-4" v-reveal="60">文章</h1>
-    <p class="text-muted mb-12" v-reveal="120">记录 AI、编程与成长。慢慢写，认真写。</p>
+  <main class="site-shell page-wrap" aria-labelledby="articles-title">
+    <header class="page-hero clay-surface clay-surface--yellow" v-reveal>
+      <p class="page-kicker">ARTICLES</p>
+      <h1 id="articles-title" class="page-title">文章</h1>
+      <p class="page-description">记录 AI、编程与成长。慢慢写，认真写。</p>
+    </header>
 
-    <div v-if="articles === null" class="py-10 text-faint text-sm">加载中…</div>
+    <div v-if="articles === null" class="loading-panel clay-surface" role="status">加载中…</div>
 
-    <div v-else-if="articles.length">
-      <router-link v-for="(a, i) in articles" :key="a.slug" :to="`/articles/${a.slug}`"
-        class="block group py-7 border-b hairline first:border-t" v-reveal="i * 60">
-        <div class="flex items-baseline justify-between gap-4 mb-2">
-          <h2 class="font-serifSc text-2xl font-bold group-hover:text-vermilion transition-colors">{{ a.title }}</h2>
-          <time class="text-faint text-sm font-code shrink-0">{{ a.date }}</time>
-        </div>
-        <p class="text-muted leading-relaxed mb-3">{{ a.summary }}</p>
-        <div class="flex gap-2">
-          <span v-for="t in a.tags" :key="t"
-            class="text-xs text-muted border hairline rounded-full px-2.5 py-0.5 bg-card">{{ t }}</span>
-        </div>
-      </router-link>
-    </div>
+    <ul v-else-if="articles.length" class="clay-grid" aria-label="文章列表">
+      <li v-for="(article, index) in articles" :key="article.slug" class="clay-list-item" v-reveal="index * 60">
+        <router-link :to="`/articles/${article.slug}`" class="clay-card clay-surface clay-interactive"
+          :class="TONES[index % TONES.length]">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <time class="clay-tag font-code">{{ article.date }}</time>
+            <span class="clay-tag">阅读全文 →</span>
+          </div>
+          <h2 class="text-2xl font-black leading-snug mb-4 pr-5">{{ article.title }}</h2>
+          <p class="text-muted leading-relaxed mb-5">{{ article.summary }}</p>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="tag in article.tags" :key="tag" class="clay-tag">{{ tag }}</span>
+          </div>
+        </router-link>
+      </li>
+    </ul>
 
-    <p v-else class="py-10 text-faint text-sm">还没有文章，第一篇正在路上。</p>
-  </div>
+    <p v-else class="empty-panel clay-surface clay-surface--pink">还没有文章，第一篇正在路上。</p>
+  </main>
 </template>

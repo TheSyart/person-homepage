@@ -9,6 +9,10 @@ const app = createApp(App);
 app.directive('reveal', {
   mounted(el, binding) {
     el.classList.add('reveal-init');
+    if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      el.classList.add('reveal-show');
+      return;
+    }
     if (typeof binding.value === 'number') {
       el.style.transitionDelay = `${binding.value}ms`;
     }

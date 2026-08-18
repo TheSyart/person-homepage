@@ -3,12 +3,13 @@ import { ref, onMounted } from 'vue';
 import { PROFILE } from '../config';
 
 const videos = ref(null);
+const TONES = ['clay-surface--blue', 'clay-surface--pink', 'clay-surface--green', 'clay-surface--yellow'];
 
 onMounted(async () => {
   try {
-    const r = await fetch('/api/videos');
-    const j = await r.json();
-    videos.value = Array.isArray(j) ? j : [];
+    const response = await fetch('/api/videos');
+    const data = await response.json();
+    videos.value = Array.isArray(data) ? data : [];
   } catch {
     videos.value = [];
   }
@@ -16,31 +17,33 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto px-6 pt-16">
-    <p class="text-xs tracking-[.35em] text-faint mb-4" v-reveal>VIDEOS</p>
-    <h1 class="font-serifSc text-4xl md:text-5xl font-bold mb-4" v-reveal="60">视频</h1>
-    <p class="text-muted mb-12" v-reveal="120">
-      在 <a :href="PROFILE.bilibiliUrl" target="_blank" rel="noopener" class="link-vermilion">B站</a> 和
-      <a :href="PROFILE.douyinUrl" target="_blank" rel="noopener" class="link-vermilion">抖音</a> 持续更新。
-    </p>
+  <main class="site-shell page-wrap" aria-labelledby="videos-title">
+    <header class="page-hero clay-surface clay-surface--pink" v-reveal>
+      <p class="page-kicker">VIDEOS</p>
+      <h1 id="videos-title" class="page-title">视频</h1>
+      <p class="page-description">
+        在 <a :href="PROFILE.bilibiliUrl" target="_blank" rel="noopener" class="link-vermilion">B站</a> 和
+        <a :href="PROFILE.douyinUrl" target="_blank" rel="noopener" class="link-vermilion">抖音</a> 持续更新。
+      </p>
+    </header>
 
-    <div v-if="videos === null" class="py-10 text-faint text-sm">加载中…</div>
+    <div v-if="videos === null" class="loading-panel clay-surface" role="status">加载中…</div>
 
-    <div v-else-if="videos.length" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <a v-for="(v, i) in videos" :key="v.id" :href="v.url" target="_blank" rel="noopener"
-        class="group border hairline rounded-lg p-6 bg-card hover:border-vermilion/50 transition-colors" v-reveal="i * 60">
-        <div class="flex items-center justify-between mb-4">
-          <span class="inline-block text-xs px-2.5 py-1 rounded"
-            :class="v.platform === 'bilibili' ? 'bg-sky-50 text-sky-700' : 'bg-rose-50 text-rose-600'">
-            {{ v.platform === 'bilibili' ? 'B站' : '抖音' }}
-          </span>
-          <time class="text-faint text-xs font-code">{{ v.date }}</time>
-        </div>
-        <h2 class="font-serifSc text-lg font-bold leading-snug group-hover:text-vermilion transition-colors mb-2">{{ v.title }}</h2>
-        <p v-if="v.desc" class="text-muted text-sm leading-relaxed">{{ v.desc }}</p>
-      </a>
-    </div>
+    <ul v-else-if="videos.length" class="clay-grid" aria-label="视频列表">
+      <li v-for="(video, index) in videos" :key="video.id" class="clay-list-item" v-reveal="index * 60">
+        <a :href="video.url" target="_blank" rel="noopener" class="clay-card clay-surface clay-interactive"
+          :class="TONES[index % TONES.length]">
+          <div class="flex items-center justify-between gap-4 mb-5">
+            <span class="clay-tag">{{ video.platform === 'bilibili' ? 'B站' : '抖音' }}</span>
+            <time class="clay-tag font-code">{{ video.date }}</time>
+          </div>
+          <h2 class="text-xl font-black leading-snug mb-3 pr-5">{{ video.title }}</h2>
+          <p v-if="video.desc" class="text-muted text-sm leading-relaxed">{{ video.desc }}</p>
+          <span class="clay-button mt-6">观看视频 →</span>
+        </a>
+      </li>
+    </ul>
 
-    <p v-else class="py-10 text-faint text-sm">视频整理中，先去 B站/抖音主页看看吧。</p>
-  </div>
+    <p v-else class="empty-panel clay-surface clay-surface--green">视频整理中，先去 B站/抖音主页看看吧。</p>
+  </main>
 </template>
