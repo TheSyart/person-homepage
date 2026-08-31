@@ -6,6 +6,17 @@
 
 线上地址：[www.shanchen.space](https://www.shanchen.space/)
 
+## ServerOps 管理
+
+仓库中的 [`.serverops/service.json`](.serverops/service.json) 告诉 ServerOps 如何安全更新线上前端。它只描述固定部署动作，不保存 GitHub Token、管理密码或平台凭据：
+
+- 使用 npm 安装依赖并执行 `npm run build`。
+- 从 `dist` 生成静态产物，原子发布到 `/opt/person`。
+- 发布后请求 `/` 完成 HTTP 健康检查；失败时恢复上一版静态目录。
+- 更新只允许发生在干净工作树上，并且只接受 GitHub `main` 分支的 fast-forward 提交。
+
+当前清单只纳管公开前端产物。`api/` 服务、运行时缓存和 `/etc/person-api.env` 仍由服务器本地进程与权限配置管理，不会被静态发布覆盖。Nginx 生产模板位于 `tools/nginx.conf`，修改后仍须经过 ServerOps/Nginx 配置检查。
+
 <p align="center">
   <img src="./public/assets/clay/agent-core.png" width="320" alt="小单说AI Clay Agent 核心">
 </p>
