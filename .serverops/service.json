@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "build": {
+    "kind": "static",
+    "packageManager": "npm",
+    "install": "ci",
+    "script": "build"
+  },
+  "publish": {
+    "mode": "artifact",
+    "outputDirectory": "dist",
+    "targetDirectory": "/opt/person"
+  },
+  "runtime": {
+    "kind": "static"
+  },
+  "health": {
+    "kind": "http",
+    "path": "/",
+    "timeoutSeconds": 5
+  }
+}
