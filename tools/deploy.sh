@@ -41,6 +41,35 @@ find "$WEB/assets" "$WEB/data" "$WEB/example" -type f -exec chmod 644 {} +
 chmod 644 "$WEB/index.html" "$WEB/favicon.svg"
 
 echo "==> [4/6] 更新 nginx 配置..."
+# ⚠️ 安全检查（2026-08-25 事故后新增，请勿删除）：
+# 本机 nginx.conf 由多个项目共用（www/dsh/model/digital/ops 等）。
+# 本脚本曾两次用过期模板覆盖生产 nginx.conf，导致 ops/model/digital 等站点全挂。
+# 覆盖前必须确认：现网生效的所有 server_name 在新模板（含其 include 的文件）中都存在。
+cur_names=$(/soft/nginx/sbin/nginx -T 2>/dev/null | grep -oP 'server_name\s+\K[^;]+' | tr ' ' '\n' | grep -v '^$' | sort -u)
+new_names=$({
+  grep -oP 'server_name\s+\K[^;]+' "$APP/tools/nginx.conf"
+  grep -oP 'include\s+\K/soft/nginx/conf/[^;[:space:]]+\.conf' "$APP/tools/nginx.conf" | while read -r f; do
+    [ -f "$f" ] && grep -oP 'server_name\s+\K[^;]+' "$f"
+  done
+} | tr ' ' '\n' | grep -v '^$' | sort -u)
+missing=$(comm -23 <(echo "$cur_names") <(echo "$new_names") || true)
+# 二次校验：现网所有 SSL 证书域名也必须在新模板覆盖范围内
+# （防止模板保留了 server_name 却丢了 443 SSL server 块）
+cur_certs=$(/soft/nginx/sbin/nginx -T 2>/dev/null | grep -oP 'ssl_certificate\s+/etc/letsencrypt/live/\K[^/]+' | sort -u)
+new_certs=$({
+  grep -oP 'ssl_certificate\s+/etc/letsencrypt/live/\K[^/]+' "$APP/tools/nginx.conf"
+  grep -oP 'include\s+\K/soft/nginx/conf/[^;[:space:]]+\.conf' "$APP/tools/nginx.conf" | while read -r f; do
+    [ -f "$f" ] && grep -oP 'ssl_certificate\s+/etc/letsencrypt/live/\K[^/]+' "$f"
+  done
+} | sort -u)
+missing_certs=$(comm -23 <(echo "$cur_certs") <(echo "$new_certs") || true)
+[ -n "$missing_certs" ] && missing="$missing $missing_certs(SSL块)"
+if [ -n "$(echo $missing | tr -d ' ')" ]; then
+  echo "❌ 中止部署：新模板缺少现网已有站点：$(echo $missing | tr '\n' ' ')" >&2
+  echo "   请先把最新 /soft/nginx/conf/nginx.conf 同步到 $APP/tools/nginx.conf 再部署：" >&2
+  echo "   sudo cp /soft/nginx/conf/nginx.conf $APP/tools/nginx.conf" >&2
+  exit 1
+fi
 cp "$APP/tools/nginx.conf" "$NGX"
 chmod 644 "$NGX"
 

@@ -2,6 +2,7 @@
 node_modules/
 dist/
 .tools/
+.cache/
 api/node_modules/
 
 # 运行时数据（访客留言/会话 token/备份不入库）

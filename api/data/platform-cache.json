@@ -4,8 +4,8 @@
     "name": "TheSyart",
     "avatar": "https://avatars.githubusercontent.com/u/141762452?v=4",
     "followers": 18,
-    "repos": 9,
-    "totalStars": 550,
+    "repos": 12,
+    "totalStars": 563,
     "joinedAt": "2023-08-08T16:58:58Z",
     "url": "https://github.com/TheSyart",
     "featuredRepos": [
@@ -13,46 +13,46 @@
         "name": "claude-agent-examples",
         "description": "Claude Agent examples - from simple to complex",
         "language": "HTML",
-        "stars": 359,
-        "forks": 94,
+        "stars": 369,
+        "forks": 97,
         "url": "https://github.com/TheSyart/claude-agent-examples"
       },
       {
         "name": "emperor-agent",
         "description": "Local Emperor-style AI agent with Vue WebUI, multi-provider LLMs, streaming chat, tools, skills, memory, and token telemetry.",
         "language": "TypeScript",
-        "stars": 175,
-        "forks": 40,
+        "stars": 178,
+        "forks": 41,
         "url": "https://github.com/TheSyart/emperor-agent"
       }
     ],
     "source": "GitHub API",
-    "updatedAt": "2026-08-18T17:26:08.667Z"
+    "updatedAt": "2026-08-31T03:01:02.066Z"
   },
   "bilibili": {
     "id": "1452412374",
     "name": "小单说AI",
-    "face": "https://i0.hdslb.com/bfs/face/e8e3d0b1a2fc775d43224c9af22edbb9766a4a03.jpg",
+    "face": "https://i0.hdslb.com/bfs/face/8eb5b3bf5e67f992f8b2c495054134e1eb42eba3.jpg",
     "sign": "分享ai 学习ai 诸君共进步",
-    "followers": 3173,
-    "following": 174,
-    "videoCount": 50,
+    "followers": 3258,
+    "following": 176,
+    "videoCount": 55,
     "url": "https://space.bilibili.com/1452412374",
     "source": "Bilibili API",
-    "updatedAt": "2026-08-18T17:26:07.521Z"
+    "updatedAt": "2026-08-31T03:01:01.610Z"
   },
   "douyin": {
     "name": "小单说AI",
     "id": "23329202234",
-    "following": 81,
-    "followers": 1990,
-    "likes": 12000,
-    "likesDisplay": "1.2万",
-    "works": 42,
+    "following": 83,
+    "followers": 2032,
+    "likes": 13000,
+    "likesDisplay": "1.3万",
+    "works": 47,
     "sign": "分享ai 学习ai 诸君共进步",
-    "avatar": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-i-c9aec8xkvj_ae001289c7b3499da40af1f159304c57~c5_300x300.jpeg?from=2956013662",
+    "avatar": "https://p3-pc.douyinpic.com/img/aweme-avatar/tos-cn-avt-0015_8859c4fa9a853d283efdd617cdc8c6c6~c5_300x300.jpeg?from=2956013662",
     "url": "https://www.douyin.com/user/MS4wLjABAAAAk5lgbm96yoPPEoGXoY3MIp4S8voya0dzcnG0Lom5-SI?from_tab_name=main",
     "source": "Douyin public profile",
-    "updatedAt": "2026-08-18T12:48:26.931Z"
+    "updatedAt": "2026-08-30T21:31:01.747Z"
   }
 }
