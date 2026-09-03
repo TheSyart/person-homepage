@@ -10,6 +10,23 @@ CI 工作流 `serverops-image.yml` 只构建、发布 `linux/amd64` 私有 GHCR 
 
 web/API 镜像必须取自同一 SHA 并各自固定 digest。web 内部 8080，Nginx 将 `/api/` 保留路径代理到 `api:3081`；API 内部 3081、`HOST=0.0.0.0`。web 的外部 env 可为空，API env 使用 `api.env.example`。镜像内安装与锁文件 Playwright 版本一致的 Chromium。可选 `ai-video-evaluator` Python 插件未打包；视频播放保留现有 B站原生接口回退。`api/data` 整体排除，迁移时完整保留文章、留言、管理 Token 与缓存；镜像不会复制仓库演示数据到挂载目录。
 
+## ServerOps 生产映射
+
+`www.shanchen.space` 与别名 `shanchen.space` 属于同一个服务（`3fe105c4-a341-480f-a22e-f734743a6ee0`）。批准配置如下；该表是部署约定，不代替面板中的实际发布状态。
+
+| 组件 | 宿主入口 | 用户 | 数据与环境 |
+| --- | --- | --- | --- |
+| Web | `127.0.0.1:8080` | `101:101` | `/etc/serverops/apps/person-homepage-web.env`，不挂载业务数据 |
+| API | `127.0.0.1:3081` | `1000:1000` | `/srv/serverops/data/person-homepage/data` → `/app/data`；`/etc/serverops/apps/person-homepage-api.env` |
+
+宿主 Nginx 保留原证书、公开策略、`/api/` 的 API 转发，以及更具体的 `/api/bilibili/` 缓存转发；前端页面及静态资源才转发到 Web 容器。原 HTTP ACME 目录仍为 `/var/www/letsencrypt`，不因容器迁移更改 Certbot 的既有续签配置。
+
+API 运行环境保留原管理员密码哈希和 Token，但将 Playwright 路径改为镜像的 `/ms-playwright`。不要照搬 CentOS 的 `NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-bundle.crt`：此路径不在 Debian 镜像中，迁移使用已验证的 Node 内置信任根。私有 CA 如有新增需求，须另行审批挂载和验证，不能关闭 TLS 校验。
+
+日常更新在 Ops「服务 → www → 代码与部署」点击“更新并上线”，由持久化任务固定 `main` 提交、核验两个镜像、停写备份、切换和检查。GitHub push 只构建镜像，不自动更新生产；不要在旧 `/opt/person-app` 执行 Git/npm 当作容器更新。旧目录的 `api/data/bilibili-videos.json`、`api/data/platform-cache.json` 是生产数据，不应 reset 或提交。
+
+人工恢复必须先停下整个 Compose 项目的 Web/API，避免旧、新 API 同时写数据；核验备份后恢复匹配的两个镜像与数据，检查通过再恢复入口。保留的 `person-api.service`、`/opt/person-app` 和 `/opt/person` 仅是迁移前恢复材料。生产开放后若已有新写入，不得未经确认就用旧数据覆盖当前目录。
+
 ## 检查和启动
 
 ```sh
