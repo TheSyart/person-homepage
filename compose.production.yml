@@ -1,0 +1,42 @@
+# Reference only. ServerOps renders production Compose from root-approved policy.
+services:
+  web:
+    image: ${HOMEPAGE_WEB_IMAGE:?Set the private GHCR image with a verified digest}
+    platform: linux/amd64
+    user: "${HOMEPAGE_WEB_UID:-101}:${HOMEPAGE_WEB_GID:-101}"
+    init: true
+    restart: unless-stopped
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    ports:
+      - "127.0.0.1:${HOMEPAGE_WEB_PORT:-8080}:8080"
+    env_file:
+      - ${HOMEPAGE_WEB_ENV_FILE:?Set an absolute path to the external runtime env file}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+  api:
+    image: ${HOMEPAGE_API_IMAGE:?Set the private GHCR image with a verified digest}
+    platform: linux/amd64
+    user: "${HOMEPAGE_API_UID:-1000}:${HOMEPAGE_API_GID:-1000}"
+    init: true
+    restart: unless-stopped
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    ports:
+      - "127.0.0.1:${HOMEPAGE_API_PORT:-3081}:3081"
+    env_file:
+      - ${HOMEPAGE_API_ENV_FILE:?Set an absolute path to the external runtime env file}
+    volumes:
+      - type: bind
+        source: ${HOMEPAGE_API_DATA_DIR:?Set the externally managed data directory}
+        target: /app/data
+        bind:
+          create_host_path: false
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

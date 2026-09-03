@@ -1,4 +1,4 @@
-/* person-api —— 个人主页内容/留言/管理微服务（仅监听 127.0.0.1，经 nginx 对外） */
+/* person-api —— 个人主页内容/留言/管理微服务，经 nginx 对外。 */
 const express = require('express');
 const store = require('./store');
 const auth = require('./auth');
@@ -7,7 +7,7 @@ const routesAdmin = require('./routes-admin');
 const platforms = require('./platforms');
 
 const PORT = parseInt(process.env.PORT, 10) || 3081;
-const HOST = '127.0.0.1';
+const HOST = process.env.HOST || '127.0.0.1';
 
 const app = express();
 app.disable('x-powered-by');

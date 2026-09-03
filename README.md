@@ -8,14 +8,7 @@
 
 ## ServerOps 管理
 
-仓库中的 [`.serverops/service.json`](.serverops/service.json) 告诉 ServerOps 如何安全更新线上前端。它只描述固定部署动作，不保存 GitHub Token、管理密码或平台凭据：
-
-- 使用 npm 安装依赖并执行 `npm run build`。
-- 从 `dist` 生成静态产物，原子发布到 `/opt/person`。
-- 发布后请求 `/` 完成 HTTP 健康检查；失败时恢复上一版静态目录。
-- 更新只允许发生在干净工作树上，并且只接受 GitHub `main` 分支的 fast-forward 提交。
-
-当前清单只纳管公开前端产物。`api/` 服务、运行时缓存和 `/etc/person-api.env` 仍由服务器本地进程与权限配置管理，不会被静态发布覆盖。Nginx 生产模板位于 `tools/nginx.conf`，修改后仍须经过 ServerOps/Nginx 配置检查。
+仓库中的 [`.serverops/service.json`](.serverops/service.json) 使用 v2 镜像发布约定：`web` 为 8080 端口的静态页面，`api` 为 3081 端口的独立 Node 服务。工作流从同一完整提交分别生成私有 GHCR 的 `person-homepage-web` 和 `person-homepage-api` 镜像。API 使用 `DATA_DIR=/app/data` 外部挂载，镜像排除整个 `api/data`，不会自动初始化或覆盖已有文章、留言、Token 与缓存。迁移前必须备份并完整复制现有数据，不能以空目录替换。详见 [容器部署说明](docker/README.md)。
 
 <p align="center">
   <img src="./public/assets/clay/agent-core.png" width="320" alt="小单说AI Clay Agent 核心">
@@ -160,7 +153,8 @@ Vite 默认使用 `http://127.0.0.1:5173`，并将 `/api` 代理到 `http://127.
 
 | 变量 | 默认值 | 用途 |
 | --- | --- | --- |
-| `PORT` | `3081` | API 端口；服务固定监听 `127.0.0.1` |
+| `PORT` | `3081` | API 端口 |
+| `HOST` | `127.0.0.1` | 监听地址；容器设为 `0.0.0.0`，宿主机只映射回环端口 |
 | `DATA_DIR` | `api/data` | 文章、留言、Token 和缓存目录 |
 | `GITHUB_TOKEN` | 空 | 提高 GitHub API 配额；只在服务端使用 |
 | `BILIBILI_DIRECT_WBI` | 空 | 设为 `1` 时强制使用纯 WBI 请求视频清单 |
@@ -232,7 +226,7 @@ npm run build
 
 仓库内的部署脚本针对当前服务器目录和服务账号编写，不是通用安装器。执行前请先检查脚本中的路径、用户、域名、证书和 Nginx 位置。
 
-当前流程：
+以下为旧 systemd 安装参考；v2 镜像部署见 [容器部署说明](docker/README.md)：
 
 1. 将项目放在 `/opt/person-app`，安装前后端依赖并运行 `npm run build`。
 2. 首次安装 API：`sudo bash /opt/person-app/tools/install-api.sh`。
